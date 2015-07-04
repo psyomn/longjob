@@ -1,0 +1,20 @@
+{
+  "name": "longjob",
+  "version": "0.0.1",
+  "description": "delegate jobs to db or other commands and store results",
+  "main": "index.js",
+  "bin": "bin/longjob",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sysadmin",
+    "mongodb"
+  ],
+  "author": "psyomn",
+  "license": "MIT",
+  "dependencies": {
+    "minimist": "^1.1.1",
+    "mongodb": "^2.0.36"
+  }
+}

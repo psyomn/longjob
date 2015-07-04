@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+
+var argv    = require('minimist')(process.argv.slice(2));
+var mongodb = require('mongodb');
+
+var MongoClient = mongodb.MongoClient;
+var url = 'mongodb://localhost:27017/test';
+
+MongoClient.connect(url, function(err, db) {
+  if (err) {
+    console.log("Can't connect to db: " + err);
+  }
+
+  console.log('Connection established to', url);
+
+  db.close();
+});

@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+var http = require('http');
+var argv = require('minimist')(process.argv.slice(2));
+
+var options = {
+  host: 'localhost',
+  port: 55555,
+};
+
+if (argv['host']) {
+  options['host'] = argv['host'];
+}
+if (argv['port']) {
+  options['port'] = argv['port'];
+}
+
+console.log("Contacting: " + options['host'] + ":" + options['port']);
+
+if (argv['job']) {
+}
+else if (argv['dbjob']) {
+}
+else {
+  console.log("usage:");
+  console.log("  longjobc <job|dbjob> <job>");
+}

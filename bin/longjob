@@ -1,17 +1,51 @@
 #!/usr/bin/env node
 
-var argv    = require('minimist')(process.argv.slice(2));
-var mongodb = require('mongodb');
+var argv      = require('minimist')(process.argv.slice(2));
+var mongodb   = require('mongodb');
+var http      = require('http');
+var constants = require('../constants.js');
 
 var MongoClient = mongodb.MongoClient;
 var url = 'mongodb://localhost:27017/test';
 
-MongoClient.connect(url, function(err, db) {
-  if (err) {
-    console.log("Can't connect to db: " + err);
-  }
+function executeQuery(query) {
+  MongoClient.connect(url, function(err, db) {
+    if (err) {
+      console.log("Can't connect to db: " + err);
+    }
 
-  console.log('Connection established to', url);
+    console.log('Connection established to', url);
 
-  db.close();
-});
+    db.close();
+  });
+}
+
+function handleRequest(request) {
+  var str = '';
+  console.log("Got request...");
+
+  request.on('data', function(chunk) {
+    str += chunk;
+  });
+
+
+  request.on('end', function() {
+    console.log("RECEIVED: " + str);
+  });
+
+}
+
+function okReply() {
+  return {'ok':'ok'};
+}
+
+function errorReply(message) {
+  return {'error':message};
+}
+
+http.createServer(function(request, response) {
+  handleRequest(request);
+  response.writeHead(200, {"Content-Type": "text/plain"});
+  response.write(JSON.stringify(okReply()));
+  response.end();
+}).listen(constants.LISTEN_PORT);

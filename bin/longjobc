@@ -2,11 +2,15 @@
 
 var http = require('http');
 var argv = require('minimist')(process.argv.slice(2));
+var constants = require('../constants.js');
 
 var options = {
   host: 'localhost',
-  port: 55555,
+  port: constants.LISTEN_PORT,
+  method: 'POST',
 };
+
+var request = {};
 
 if (argv['host']) {
   options['host'] = argv['host'];
@@ -18,10 +22,27 @@ if (argv['port']) {
 console.log("Contacting: " + options['host'] + ":" + options['port']);
 
 if (argv['job']) {
+  request['type'] = 'job';
 }
+
 else if (argv['dbjob']) {
+  request['type'] = 'dbjob';
 }
+
 else {
   console.log("usage:");
   console.log("  longjobc <job|dbjob> <job>");
+  return;
 }
+
+http.request(options, function(response) {
+  var str = '';
+  response.on('data', function(chunk) {
+    str += chunk;
+  });
+
+  response.on('end', function() {
+    console.log("Received: " + str);
+  });
+}).end();
+

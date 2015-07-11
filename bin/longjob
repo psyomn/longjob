@@ -3,12 +3,15 @@
 var argv      = require('minimist')(process.argv.slice(2));
 var mongodb   = require('mongodb');
 var http      = require('http');
+var cp        = require('child_process');
 var constants = require('../constants.js');
 
 var MongoClient = mongodb.MongoClient;
 var Longjob = require('../longjob.js');
 
 var url = 'mongodb://localhost:27017/test';
+
+var jobs = new Array();
 
 function executeQuery(query) {
   MongoClient.connect(url, function(err, db) {
@@ -19,6 +22,13 @@ function executeQuery(query) {
     console.log('Connection established to', url);
 
     db.close();
+  });
+}
+
+function processJob() {
+  exec('cat *.js | wc -l', function (err, stdout, stderr) {
+    console.log('stdout: ' + stdout);
+    console.log('stderr: ' + stderr);
   });
 }
 
@@ -36,7 +46,13 @@ function handleRequest(request) {
       case 'job':
         console.log("received job req");
         var lj = new Longjob();
+        jobs.push(lj);
         console.log("  started job at: " + lj.getStartTime());
+        child = cp.fork(__dirname + '/../sysjob.js');
+        child.on('message', function(lj) {
+          console.log("child potato");
+        });
+        child.send(lj);
         break;
       case 'dbjob':
         console.log("received dbjob req");

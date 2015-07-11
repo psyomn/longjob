@@ -4,13 +4,13 @@ var http = require('http');
 var argv = require('minimist')(process.argv.slice(2));
 var constants = require('../constants.js');
 
+var request = {};
+
 var options = {
   host: 'localhost',
   port: constants.LISTEN_PORT,
   method: 'POST',
 };
-
-var request = {};
 
 if (argv['host']) {
   options['host'] = argv['host'];
@@ -46,6 +46,6 @@ var post_req = http.request(options, function(response) {
   });
 });
 
-post_req.write("potato");
+post_req.write(JSON.stringify(request));
 post_req.end();
 

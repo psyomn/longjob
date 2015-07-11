@@ -6,6 +6,8 @@ var http      = require('http');
 var constants = require('../constants.js');
 
 var MongoClient = mongodb.MongoClient;
+var Longjob = require('../longjob.js');
+
 var url = 'mongodb://localhost:27017/test';
 
 function executeQuery(query) {
@@ -28,11 +30,22 @@ function handleRequest(request) {
     str += chunk;
   });
 
-
   request.on('end', function() {
-    console.log("RECEIVED: " + str);
+    var cmd = JSON.parse(str);
+    switch(cmd.type) {
+      case 'job':
+        console.log("received job req");
+        var lj = new Longjob();
+        console.log("  started job at: " + lj.getStartTime());
+        break;
+      case 'dbjob':
+        console.log("received dbjob req");
+        break;
+      default:
+        console.log("did not understand request: " + cmd);
+        break;
+    }
   });
-
 }
 
 function okReply() {
